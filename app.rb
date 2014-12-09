@@ -103,6 +103,15 @@ end
 		end
 	end
       
+
+get '/api/v2/?' do
+'station /api/v2 is up and working'
+end
+get '/api/v2/station/:num.json' do
+content_type :json
+user.nil? ? halt(404) : user.to_json
+end
+
     post '/api/v2/tutorials' do
 		content_type :json
 		body = request.body.read
