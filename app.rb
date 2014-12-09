@@ -2,7 +2,7 @@
 require 'sinatra/base'
 require 'busgogo'
 require 'json'
-# require './tutorial'
+require './tutorial'
 
 
 require 'bundler/setup'
@@ -44,24 +44,6 @@ class Bus < Sinatra::Base
 		end
 
 	end
-
-	# 	def get_profile(station)
-	#        	scmachine = WebScraper.new
-
-
-	# 			profile_after={
-	# 			'station' => station,
-	# 			'profiles' => []
-	# 			}
-
-	# 			scmachine.busstation.each do |value|
-	# 			profile_after['profiles'].push('station' => value)
-
-	# 			end
-	# 			profile_after
-
-	# 	end
-	# end
 
 
 	get '/' do
