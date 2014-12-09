@@ -2,7 +2,7 @@
 require 'sinatra/base'
 require 'busgogo'
 require 'json'
-# require './tutorial'
+require './tutorial'
 
 
 require 'bundler/setup'
@@ -17,6 +17,9 @@ class Bus < Sinatra::Base
 		enable :logging
 		end
 
+ configure :development do
+     set :session_secret, "something" # ignore if not using shotgun in development
+ end
 	helpers do
 		def user
 			num = params[:num].to_i
@@ -43,25 +46,13 @@ class Bus < Sinatra::Base
 			profile_after
 		end
 
+                 def new_tutorial(req)
+                 tutorial = Tutorial.new
+                 tutorial.num = req['num'].to_json
+                 tutorial.station = req['station'].to_json
+                 tutorial
+end
 	end
-
-	# 	def get_profile(station)
-	#        	scmachine = WebScraper.new
-
-
-	# 			profile_after={
-	# 			'station' => station,
-	# 			'profiles' => []
-	# 			}
-
-	# 			scmachine.busstation.each do |value|
-	# 			profile_after['profiles'].push('station' => value)
-
-	# 			end
-	# 			profile_after
-
-	# 	end
-	# end
 
 
 	get '/' do
@@ -111,6 +102,44 @@ class Bus < Sinatra::Base
 			halt 400
 		end
 	end
+      
+
+get '/api/v2/?' do
+'station /api/v2 is up and working'
+end
+get '/api/v2/station/:num.json' do
+content_type :json
+user.nil? ? halt(404) : user.to_json
+end
+
+    post '/api/v2/tutorials' do
+		content_type :json
+		body = request.body.read
+		logger.info body
+		begin
+		req = JSON.parse(body)
+		logger.info req
+		rescue Exception => e
+		halt 400
+		end
+		tutorial = new_tutorial(req)
+		if tutorial.save
+		redirect "/api/v2/tutorials/#{tutorial.id}"
+		end
+		end
+
+
+     get '/api/v2/tutorials/:id' do
+     content_type :json
+     logger.info "GET /api/v2/tutorials/#{params[:id]}"
+     begin
+      @tutorial = Tutorial.find(params[:id])
+      num = JSON.parse(@tutorial.num)
+      station = JSON.parse(@tutorial.station)
+      logger.info({ num: num, station: station }.to_json)
+     rescue
+      halt 400
+     end
 
 end
 end
