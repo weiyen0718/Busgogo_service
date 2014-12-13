@@ -21,8 +21,8 @@ class Bus < Sinatra::Base
      set :session_secret, "something" # ignore if not using shotgun in development
  end
 	helpers do
-		def user
-			num = params[:num].to_i
+		def user(num)
+			
 			# @station = user
 			return nil unless num
 
@@ -51,7 +51,7 @@ class Bus < Sinatra::Base
                  tutorial.num = req['num'].to_json
                  tutorial.station = req['station'].to_json
                  tutorial
-end
+                 end
 	end
 
 
@@ -63,9 +63,9 @@ end
 		'Busgogo service is working at station homepage'
 	end
 
-	get '/station/*?' do
-		'Busgogo service is working at station page'
-	end
+	#get '/station/*?' do
+	#	'Busgogo service is working at station page'
+	#end
 
 
 	post '/api/v1/tutorials' do
@@ -107,9 +107,16 @@ end
 get '/api/v2/?' do
 'station /api/v2 is up and working'
 end
+
 get '/api/v2/station/:num.json' do
+'!!!!!!!!!!!!!!!!!!!!!!!!!!'
+#no come in
 content_type :json
-user.nil? ? halt(404) : user.to_json
+num = params[:num].to_i
+user(num).nil? ? halt(404) : user(num).to_json
+logger.info user
+
+
 end
 
     post '/api/v2/tutorials' do
@@ -140,6 +147,6 @@ end
      rescue
       halt 400
      end
-
+		end
 end
 end
