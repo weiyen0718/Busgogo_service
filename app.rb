@@ -13,17 +13,17 @@ class Bus < Sinatra::Base
 	enable :sessions
 	register Sinatra::Flash
 
-		configure :production, :development do
+	configure :production, :development do
 		enable :logging
-		end
+	end
 
- configure :development do
-     set :session_secret, "something" # ignore if not using shotgun in development
- end
+	configure :development do
+		set :session_secret, "something"
+ 	end
 	helpers do
-		def user(num)
-			
-			# @station = user
+		def user
+		
+			num = params[:num].to_i			
 			return nil unless num
 
 			profile_after={
@@ -74,7 +74,8 @@ class Bus < Sinatra::Base
 				req = JSON.parse(request.body.read)
 				logger.info req
 			rescue
-			halt 400
+				halt 400
+         end
 		#endTables: 0
 
 			tutorial = Tutorial.new
@@ -104,49 +105,45 @@ class Bus < Sinatra::Base
 	end
       
 
-get '/api/v2/?' do
-'station /api/v2 is up and working'
-end
+	get '/api/v2/?' do
+		'station /api/v2 is up and working'
+	end
 
-get '/api/v2/station/:num.json' do
-'!!!!!!!!!!!!!!!!!!!!!!!!!!'
-#no come in
-content_type :json
-num = params[:num].to_i
-user(num).nil? ? halt(404) : user(num).to_json
-logger.info user
-
-
-end
+	get '/api/v2/station/:num.json' do
+		logger.info "API GET STATION"
+		content_type :json
+		#num = params[:num].to_i
+		user.nil? ? halt(404) : user.to_json
+	end
 
     post '/api/v2/tutorials' do
 		content_type :json
 		body = request.body.read
 		logger.info body
 		begin
-		req = JSON.parse(body)
-		logger.info req
+			req = JSON.parse(body)
+			logger.info req
 		rescue Exception => e
-		halt 400
+			halt 400
 		end
 		tutorial = new_tutorial(req)
 		if tutorial.save
-		redirect "/api/v2/tutorials/#{tutorial.id}"
+			redirect "/api/v2/tutorials/#{tutorial.id}"
 		end
-		end
+	end
 
 
-     get '/api/v2/tutorials/:id' do
-     content_type :json
-     logger.info "GET /api/v2/tutorials/#{params[:id]}"
-     begin
-      @tutorial = Tutorial.find(params[:id])
-      num = JSON.parse(@tutorial.num)
-      station = JSON.parse(@tutorial.station)
-      logger.info({ num: num, station: station }.to_json)
-     rescue
-      halt 400
-     end
+	get '/api/v2/tutorials/:id' do
+		content_type :json
+		logger.info "GET /api/v2/tutorials/#{params[:id]}"
+		begin
+			@tutorial = Tutorial.find(params[:id])
+			num = JSON.parse(@tutorial.num)
+			station = JSON.parse(@tutorial.station)
+			logger.info({ num: num, station: station }.to_json)
+		rescue
+			halt 400
 		end
+	end
 end
-end
+
