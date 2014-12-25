@@ -32,10 +32,7 @@ class Bus < Sinatra::Base
 			}
 
 			begin
-				# WebScraper::Scraper.busstation.each do |value|
-				# 		profile_after['profiles'].push('station' => value)
-				# end
-				# profile_after
+				
 
 				buses = WebScraper.new
 				stations = buses.busstation
@@ -105,9 +102,6 @@ class Bus < Sinatra::Base
 	end
       
 
-	get '/api/v2/?' do
-		'station /api/v2 is up and working'
-	end
 
 	get '/api/v2/station/:num.json' do
 		logger.info "API GET STATION"
@@ -140,10 +134,13 @@ class Bus < Sinatra::Base
 			@tutorial = Tutorial.find(params[:id])
 			num = JSON.parse(@tutorial.num)
 			station = JSON.parse(@tutorial.station)
-			logger.info({ num: num, station: station }.to_json)
+			#logger.info({ num: num, station: station }.to_json)
+         result = { num: num, station: station }.to_json
+          
 		rescue
 			halt 400
 		end
+
 	end
 end
 
