@@ -1,8 +1,10 @@
 #require 'bundler/setup'
+
 require 'sinatra/base'
 require 'busgogo'
 require 'json'
 require './tutorial'
+
 
 
 require 'bundler/setup'
@@ -135,7 +137,7 @@ class Bus < Sinatra::Base
 			num = JSON.parse(@tutorial.num)
 			station = JSON.parse(@tutorial.station)
 			#logger.info({ num: num, station: station }.to_json)
-         result = { num: num, station: station }.to_json
+         @result = { num: num, station: station }.to_json
           
 		rescue
 			halt 400
