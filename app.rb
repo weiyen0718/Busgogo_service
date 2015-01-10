@@ -6,7 +6,6 @@ require 'json'
 require './tutorial'
 
 
-
 require 'bundler/setup'
 require 'haml'
 require 'sinatra/flash'
@@ -30,25 +29,35 @@ class Bus < Sinatra::Base
 
 			profile_after={
 		 		'station' => num,
-				'profiles' => 'not yet found'
+				'profiles' => 'not yet found',
+				'data'  => []				
 			}
 
 			begin
-				
-
 				buses = WebScraper.new
 				stations = buses.busstation
 				profile_after['profiles'] = stations[num]
+				
+				busess = WebScraper.new
+				adr = busess.selectdropdown('http://www.hcbus.com.tw/big5/service.asp',num)
+				logger.info("Found: #{adr}")
+				adr.each do |name,tmp_adr|
+				profile_after['data'].push('stop' => name,'adr' => tmp_adr)
+					end
+			
+				
 			rescue
 				return nil
 			end
 			profile_after
+		
 		end
 
                  def new_tutorial(req)
                  tutorial = Tutorial.new
                  tutorial.num = req['num'].to_json
                  tutorial.station = req['station'].to_json
+					  tutorial.address = req['address'].to_json
                  tutorial
                  end
 	end
@@ -80,6 +89,7 @@ class Bus < Sinatra::Base
 			tutorial = Tutorial.new
 			tutorial.num = req['num'].to_json
 			tutorial.station = req['station'].to_json
+			tutorial.address = req['address'].to_json
 			if tutorial.save
 				status 201
 				redirect "/api/v1/tutorials/#{tutorial.id}"
@@ -95,7 +105,8 @@ class Bus < Sinatra::Base
 		  @tutorial = Tutorial.find(params[:id])
 			num = @tutorial.num
 			station = @tutorial.station
-			result = { num: num, station: station }.to_json
+			address = @tutorial.address
+			result = { num: num, station: station, address: address}.to_json
 			logger.info("Found: #{result}")
 			result
 		rescue
@@ -136,8 +147,9 @@ class Bus < Sinatra::Base
 			@tutorial = Tutorial.find(params[:id])
 			num = JSON.parse(@tutorial.num)
 			station = JSON.parse(@tutorial.station)
+			address = JSON.parse(@tutorial.address)
 			#logger.info({ num: num, station: station }.to_json)
-         @result = { num: num, station: station }.to_json
+         @result = { num: num, station: station , address: address}.to_json
           
 		rescue
 			halt 400
