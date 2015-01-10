@@ -142,19 +142,23 @@ class Bus < Sinatra::Base
 
 	get '/api/v2/tutorials/:id' do
 		content_type :json
-		logger.info "GET /api/v2/tutorials/#{params[:id]}"
+		
 		begin
-			@tutorial = Tutorial.find(params[:id])
-			num = JSON.parse(@tutorial.num)
-			station = JSON.parse(@tutorial.station)
-			address = JSON.parse(@tutorial.address)
-			#logger.info({ num: num, station: station }.to_json)
-         @result = { num: num, station: station , address: address}.to_json
+			tutorial = Tutorial.find(params[:id])
+			#num = JSON.parse(tutorial.num)
+			#station = JSON.parse(tutorial.station)
+			#address = JSON.parse(tutorial.address)
+			logger.info "#{tutorial.num}, #{tutorial.station},#{tutorial.address} "
+         result = [tutorial.num+1, tutorial.station, tutorial.address].to_json
+		
           
 		rescue
 			halt 400
 		end
-
+		result
 	end
+	delete '/api/v2/tutorials/:id' do
+		Tutorial.destroy(params[:id])
+       end
 end
 
