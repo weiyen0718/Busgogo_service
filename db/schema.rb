@@ -11,6 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141130133622) do
+ActiveRecord::Schema.define(version: 20150109183423) do
+
+  create_table "tutorials", force: true do |t|
+    t.integer "num"
+    t.text    "station"
+    t.text    "address"
+  end
 
 end
