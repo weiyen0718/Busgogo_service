@@ -39,7 +39,7 @@ class Bus < Sinatra::Base
 				profile_after['profiles'] = stations[num]
 				
 				busess = WebScraper.new
-				adr = busess.selectdropdown('http://www.hcbus.com.tw/big5/service.asp',num)
+				adr = busess.selectdropdown('http://www.hcbus.com.tw/big5/service.asp',num-1)
 				logger.info("Found: #{adr}")
 				adr.each do |name,tmp_adr|
 				profile_after['data'].push('stop' => name,'adr' => tmp_adr)
